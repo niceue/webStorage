@@ -67,7 +67,7 @@
                     this.length = gs.length;
                 },
                 clear: function(){
-                    for(var key in gs) this.removeItem(key);
+                    for(var key in gs) gs.removeItem(key);
                     this.length = 0;
                 }
             };
