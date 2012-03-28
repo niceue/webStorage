@@ -47,7 +47,7 @@
             e.load(s);
             _l();
 
-		// globalStorage FF2+ (https://developer.mozilla.org/en/dom/storage#globalStorage)
+        // globalStorage FF2+ (https://developer.mozilla.org/en/dom/storage#globalStorage)
         }else if(w.globalStorage){
             var gs = w['globalStorage'][w.location.hostname],
             w.localStorage = {
@@ -72,6 +72,6 @@
                 }
             };
             w.localStorage.length = gs.length;
-		}
+        }
     }
 })(window, document);
