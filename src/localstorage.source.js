@@ -49,7 +49,7 @@
 
         // globalStorage FF2+ (https://developer.mozilla.org/en/dom/storage#globalStorage)
         }else if(w.globalStorage){
-            var gs = w['globalStorage'][w.location.hostname],
+            var gs = w['globalStorage'][w.location.hostname];
             w.localStorage = {
                 length: 0,
                 key: function(n){
