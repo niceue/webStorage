@@ -37,13 +37,13 @@
                     e.save(s);
                     this.length=0;
                 }
-            },
-            _a = function(){
-                return e.XMLDocument.documentElement.attributes
-            },
-            _l = function(){
-                w.localStorage.length = _a().length
             };
+            var _a = function(){
+                    return e.XMLDocument.documentElement.attributes
+                },
+                _l = function(){
+                    w.localStorage.length = _a().length
+                };
             e.load(s);
             _l();
 
