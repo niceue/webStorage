@@ -1,57 +1,63 @@
-/** HTML5 localStorage
- * @desc    Cross Browser localStorage, 
+/** localStorage
+ * @desc    Cross Browser HTML5 Local Storage Support 
  * @copy    Jony (www.niceue.com), MIT Licensed
  */
-(function(w, d){
-	if(!w.localStorage){		
+(function(win){
+	if(!win.localStorage){
+        var doc = win.document,
+            ns = doc.domain;
         // userData IE5+ (http://msdn.microsoft.com/en-us/library/ms531424.aspx)
-        if(d.documentElement.addBehavior){
-            var e = d.createElement("meta"), s = "localStorage";
-            e.addBehavior("#default#userdata");
-            d.getElementsByTagName("head")[0].appendChild(e);
-            w.localStorage = {
-                length: 0,
+        if(doc.documentElement.addBehavior){
+            var el = doc.createElement("meta");
+            el.addBehavior("#default#userdata");
+            doc.getElementsByTagName("head")[0].appendChild(el);
+            win.localStorage = {
+                length: (function(){
+                        el.load(ns);
+                        _uploadLength();
+                    })(),
                 key: function(n){
-                    return (n>=0 && n<this.length) ? _a()[n].nodeName : null
+                    el.load(ns);
+                    return (n>=0 && n<this.length) ? _attrs()[n].nodeName : null
                 },
                 setItem: function(key , val){
-                    e.load(s);
-                    e.setAttribute(key , val);
-                    e.save(s);
-                    _l();
+                    el.load(ns);
+                    el.setAttribute(key , val);
+                    el.save(ns);
+                    _uploadLength();
                 },
                 getItem: function(key){
-                    e.load(s);
-                    return e.getAttribute(key);
+                    el.load(ns);
+                    return el.getAttribute(key);
                 },
                 removeItem: function(key){
-                    e.load(s);
-                    e.removeAttribute(key);
-                    e.save(s);
-                    _l();
+                    el.load(ns);
+                    el.removeAttribute(key);
+                    el.save(ns);
+                    _uploadLength();
                 },
                 clear: function(){
-                    e.load(s);
+                    el.load(ns);
                     var a, i = 0;
-                    while (a = _a()[i++]) e.removeAttribute(a.nodeName);
-                    e.save(s);
+                    while (a = _attrs()[i++]) el.removeAttribute(a.nodeName);
+                    el.save(ns);
                     this.length=0;
                 }
-            },
-            _a = function(){
-                return e.XMLDocument.documentElement.attributes
-            },
-            _l = function(){
-                w.localStorage.length = _a().length
             };
-            e.load(s);
-            _l();
+            function _attrs(){
+                return el.XMLDocument.documentElement.attributes;
+            }
+            function _uploadLength(){
+                win.localStorage.length = _attrs().length;
+            }
 
         // globalStorage FF2+ (https://developer.mozilla.org/en/dom/storage#globalStorage)
-        }else if(w.globalStorage){
-            var gs = w['globalStorage'][w.location.hostname];
-            w.localStorage = {
-                length: 0,
+        } else if (win.globalStorage){
+            var gs = win.globalStorage[ns];
+            win.localStorage = {
+                length: (function(){
+                        return gs.length;
+                    })(),
                 key: function(n){
                     return gs.key(n)
                 },
@@ -71,7 +77,6 @@
                     this.length = 0;
                 }
             };
-            w.localStorage.length = gs.length;
         }
     }
-})(window, document);
+})(this);
