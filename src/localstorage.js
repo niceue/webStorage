@@ -5,14 +5,14 @@
 (function(window){
 	if(window.localStorage) return;
     
-    var doc = document,
-        ns = location.hostname,
+    var doc = window.document,
+        ns = window.location.hostname,
         localStorage;
         
     // userData IE5+ (http://msdn.microsoft.com/en-us/library/ms531424.aspx)
     if(doc.documentElement.addBehavior){
         var el = doc.createElement("meta");
-        el.addBehavior("#default#userdata");
+        el.addBehavior("#default#userData");
         doc.getElementsByTagName("head")[0].appendChild(el);
         localStorage = {
             length: (function(){
@@ -24,7 +24,6 @@
                 return (n>=0 && n<this.length) ? _attrs()[n].nodeName : null
             },
             setItem: function(key , val){
-                el.load(ns);
                 el.setAttribute(key , val);
                 el.save(ns);
                 _updateLength();
@@ -34,13 +33,11 @@
                 return el.getAttribute(key);
             },
             removeItem: function(key){
-                el.load(ns);
                 el.removeAttribute(key);
                 el.save(ns);
                 _updateLength();
             },
             clear: function(){
-                el.load(ns);
                 var a, i = 0;
                 while (a = _attrs()[i++]) el.removeAttribute(a.nodeName);
                 el.save(ns);
