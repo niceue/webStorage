@@ -31,6 +31,24 @@
         <hr>
 
         <section id="main_content">
+<h1>Storage Test</h1>
+    <p>Values are stored on <code>keyup</code></p>
+    <p>Content loaded from previous sessions:</p>
+    <ul id="previous"></ul>
+
+<div>
+	<label for="session">sessionStorage:</label>
+	<input type="text" name="session" value="" id="session" />          
+</div>
+<div>
+	<label for="local">localStorage:</label>
+	<input type="text" name="local" value="" id="local" />
+</div>
+	<input type="button" value="load value" onclick="loadStorage()" />
+    <input type="button" id="clear" value="Clear storage" />
+	<input type="button" value="dump" onclick="dumpKeys()" />
+<hr><hr>
+
           <h3>HTML5 Web Storage Solutions</h3>
 
 <p>HTML5 provide a web storage API, include localStorage and sessionStorage, that most browsers have supported,but not in some old browsers,like IE lower than version 8, and Firefox lower than version 3.5.
@@ -45,5 +63,100 @@ This script will provide solutions for it, and after you included it, you can us
         
       </div>
     </div>
+
+<script src="src/localstorage.js"></script>
+<script src="src/sessionstorage.js"></script>
+<script>
+
+var addEvent = (function () {
+  if (document.addEventListener) {
+    return function (el, type, fn) {
+      if (el && el.nodeName || el === window) {
+        el.addEventListener(type, fn, false);
+      } else if (el && el.length) {
+        for (var i = 0; i < el.length; i++) {
+          addEvent(el[i], type, fn);
+        }
+      }
+    };
+  } else {
+    return function (el, type, fn) {
+      if (el && el.nodeName || el === window) {
+        el.attachEvent('on' + type, function () { return fn.call(el, window.event); });
+      } else if (el && el.length) {
+        for (var i = 0; i < el.length; i++) {
+          addEvent(el[i], type, fn);
+        }
+      }
+    };
+  }
+})();
+function getStorage(type) {
+  var storage = window[type + 'Storage'],
+    delta = 0,
+    li = document.createElement('li');
+
+  if (!window[type + 'Storage']) return;
+
+  if (storage.getItem('value')) {
+    delta = ((new Date()).getTime() - (new Date()).setTime(storage.getItem('timestamp'))) / 1000;
+    
+    li.innerHTML = type + 'Storage: <span class="blue">' + storage.getItem('value') + '</span> (last updated: ' + delta + 's ago)';
+  } else {
+    li.innerHTML = type + 'Storage is empty';
+  }
+
+  document.getElementById('previous').appendChild(li);
+}
+
+getStorage('session');
+getStorage('local');
+
+function loadStorage(){
+	var val1= sessionStorage.getItem('value'),
+		val2= localStorage.getItem('value');
+	document.getElementById('session').value = val1? val1:'';
+	document.getElementById('local').value = val2? val2:'';
+}
+
+addEvent(document.getElementById('session'), 'keyup', function () {
+  sessionStorage.setItem('value', this.value);
+  sessionStorage.setItem('timestamp', (new Date()).getTime());
+});
+
+addEvent(document.getElementById('local'), 'keyup', function () {
+  localStorage.setItem('value', this.value);
+  localStorage.setItem('timestamp', (new Date()).getTime());
+});
+
+addEvent(document.getElementById('clear'), 'click', function () {
+  sessionStorage.clear();
+  localStorage.clear();
+  document.getElementById('previous').innerHTML = '';
+  getStorage('local');
+  getStorage('session');
+});
+
+function dumpKeys(){
+	var len = localStorage.length, name;
+	var str='[localStorage]:\nlength:'+ len +'\nstorage:\n{\n';
+	for(var i=0; i<len; i++){
+		name = localStorage.key(i);
+		str+= name+' : '+ localStorage.getItem(name);
+		str+= ',\n';
+	}
+	str+= '}\n\n';
+	
+	len = sessionStorage.length;
+	str+='[sessionStorage]:\nlength:'+ len +'\nstorage:\n{\n';
+	for(var i=0; i<len; i++){
+		name = sessionStorage.key(i);
+		str+= name+' : '+ sessionStorage.getItem(name);
+		str+= ',\n';
+	}
+	str+= '}';
+	alert(str);
+}
+</script>
   </body>
 </html>
